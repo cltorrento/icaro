@@ -29,9 +29,8 @@ jobs:
           echo "zip_created=false" >> $GITHUB_ENV
         fi
 
-    # 3. Upload the zip file as an artifact for download, if it was created
+    # 3. Upload the zip file as an artifact for download (upload even if empty for debugging purposes)
     - name: Upload zip as artifact
-      if: env.zip_created == 'true'
       uses: actions/upload-artifact@v3
       with:
         name: modified-files-zip
