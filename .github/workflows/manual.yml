@@ -14,6 +14,7 @@ jobs:
 
     # 2. Identify new or modified files and create a zip archive
     - name: Create zip of new/modified files
+      id: zip_files
       run: |
         # Find new or modified files (excluding deleted ones)
         git diff --name-only --diff-filter=ACM > modified_files.txt
@@ -22,13 +23,15 @@ jobs:
         if [ -s modified_files.txt ]; then
           # Create zip while keeping folder structure
           zip -r modified_files.zip -@ < modified_files.txt
+          echo "zip_created=true" >> $GITHUB_ENV
         else
           echo "No new or modified files to zip."
+          echo "zip_created=false" >> $GITHUB_ENV
         fi
 
-    # 3. Upload the zip file as an artifact for download
+    # 3. Upload the zip file as an artifact for download, if it was created
     - name: Upload zip as artifact
-      if: exists('modified_files.zip')
+      if: env.zip_created == 'true'
       uses: actions/upload-artifact@v3
       with:
         name: modified-files-zip
